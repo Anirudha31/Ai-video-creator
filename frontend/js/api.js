@@ -1,17 +1,15 @@
-/**
- * Thin API client for the ReelForge backend.
- *
- * Auto-detects the backend base URL:
- *  - If served from the same origin as the backend (e.g. reverse-proxied), uses relative paths.
- *  - Otherwise defaults to http://<same-hostname>:8000 (the default docker-compose backend port).
- * Override by setting window.REELFORGE_API_BASE before this script loads.
- */
 const API_BASE = (() => {
   if (window.REELFORGE_API_BASE) return window.REELFORGE_API_BASE;
+  
   const { protocol, hostname, port } = window.location;
-  // If frontend is already on 8000, assume same-origin API (e.g. served by FastAPI itself).
+  
   if (port === "8000") return "";
-  return `${protocol}//${hostname}:8000`;
+  
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return `${protocol}//${hostname}:8000`;
+  }
+
+  return `https://ai-video-creator-production-ab2e.up.railway.app`;
 })();
 
 const Api = {
@@ -39,7 +37,7 @@ const Api = {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || "Failed to start generation");
     }
-    return res.json(); // { job_id }
+    return res.json();
   },
 
   async getJob(jobId) {
