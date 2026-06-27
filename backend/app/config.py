@@ -1,16 +1,3 @@
-"""
-Central configuration for the backend.
-
-Every external API key is OPTIONAL. The app is designed to run fully
-for free with zero keys configured:
-  - No ANTHROPIC_API_KEY  -> falls back to a template-based script planner
-  - No PEXELS_API_KEY     -> falls back to local placeholder/generated visuals
-  - TTS (edge-tts / gTTS) -> free, no key needed
-  - Captions (faster-whisper) -> free, runs locally, no key needed
-
-Copy .env.example to .env and fill in keys only if you want the
-upgraded behavior (smarter scripts, real stock footage).
-"""
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,7 +6,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     # --- General ---
-    APP_NAME: str = "ReelForge AI Studio"
+    APP_NAME: str = "Cinematic AI"
     ENV: str = "development"
     HOST: str = "0.0.0.0"
     PORT: int = 8000
@@ -46,7 +33,7 @@ class Settings(BaseSettings):
     DEFAULT_VOICE: str = "en-US-AriaNeural"
 
     # --- Captions ---
-    WHISPER_MODEL_SIZE: str = "base"  # tiny/base/small/medium - bigger = slower but more accurate
+    WHISPER_MODEL_SIZE: str = "medium"  # tiny/base/small/medium - bigger = slower but more accurate
     WHISPER_DEVICE: str = "cpu"
 
     # --- Rendering ---
