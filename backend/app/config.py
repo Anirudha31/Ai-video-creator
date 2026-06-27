@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     DEFAULT_VOICE: str = "en-US-AriaNeural"
 
     # --- Captions ---
-    WHISPER_MODEL_SIZE: str = "medium"  # tiny/base/small/medium - bigger = slower but more accurate
+    WHISPER_MODEL_SIZE: str = "tiny"  # tiny/base/small/medium - bigger = slower but more accurate
     WHISPER_DEVICE: str = "cpu"
 
     # --- Rendering ---
