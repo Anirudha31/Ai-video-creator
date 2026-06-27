@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+# ffmpeg: required by moviepy for encoding/decoding.
+# fonts-dejavu-core / fonts-liberation: used for caption + thumbnail text rendering.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     fonts-dejavu-core \
