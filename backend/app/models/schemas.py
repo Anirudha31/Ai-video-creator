@@ -44,8 +44,24 @@ class GenerateRequest(BaseModel):
     add_music: bool = True
     add_voiceover: bool = True
     add_thumbnail: bool = True
-    music_mood: Optional[str] = None  # auto if None
-    aspect_override: Optional[str] = None  # "9:16" | "16:9" | "1:1"
+    music_mood: Optional[str] = None 
+    custom_width: Optional[int] = Field(None, ge=200, le=3840)   
+    custom_height: Optional[int] = Field(None, ge=200, le=3840) 
+
+
+def resolve_dimensions(request: GenerateRequest) -> tuple[int, int]:
+    """
+    Returns the (width, height) to actually render at for this request.
+    For platform == "custom" with valid custom_width/custom_height supplied,
+    those override the generic custom-platform default. Dimensions are
+    rounded down to an even number, since libx264 requires even width/height.
+    """
+    spec = PLATFORM_SPECS[request.platform]
+    if request.platform == "custom" and request.custom_width and request.custom_height:
+        w, h = request.custom_width, request.custom_height
+    else:
+        w, h = spec["w"], spec["h"]
+    return (w // 2 * 2, h // 2 * 2)
 
 
 class Scene(BaseModel):

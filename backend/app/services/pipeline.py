@@ -12,7 +12,7 @@ from pathlib import Path
 import traceback
 
 from app.config import get_settings
-from app.models.schemas import JobStatus, PLATFORM_SPECS
+from app.models.schemas import JobStatus, resolve_dimensions
 from app.services import job_store
 from app.services.script_planner import plan_script
 from app.services.visual_source import source_visual_for_scene
@@ -42,8 +42,7 @@ def run_pipeline(job_id: str) -> None:
         plan = plan_script(req)
         job_store.update_job(job_id, plan=plan, progress=18)
 
-        spec = PLATFORM_SPECS[req.platform]
-        width, height = spec["w"], spec["h"]
+        width, height = resolve_dimensions(req)
 
         # 2. Source visuals per scene
         job_store.update_job(job_id, status=JobStatus.SOURCING, progress=22, message="Finding footage for each scene...")
@@ -87,7 +86,8 @@ def run_pipeline(job_id: str) -> None:
             voiceover_path=voiceover_path,
             music_path=music_path,
             caption_cues=caption_cues,
-            platform=req.platform,
+            width=width,
+            height=height,
             out_path=out_path,
         )
         job_store.update_job(job_id, progress=90, video_path=str(out_path))

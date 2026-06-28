@@ -389,6 +389,9 @@ a {
   gap: 14px;
   align-items: center;
 }
+.composer__options[hidden] {
+  display: none;
+}
 .opt {
   display: flex;
   align-items: center;
@@ -420,6 +423,10 @@ a {
   accent-color: var(--accent);
   width: 15px;
   height: 15px;
+}
+.opt__number {
+  width: 64px;
+  text-align: center;
 }
 
 /* ===========================================================

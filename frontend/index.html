@@ -85,6 +85,14 @@
 
           <!-- Advanced options panel, collapsed by default -->
           <div class="composer__options" id="optionsPanel" hidden>
+            <div class="opt" id="customDimsGroup" hidden>
+              <span class="opt__label">Width × Height</span>
+              <input type="number" id="optCustomWidth" class="opt__select opt__number" value="1080" min="200" max="3840"
+                step="2" aria-label="Custom width">
+              <span aria-hidden="true">×</span>
+              <input type="number" id="optCustomHeight" class="opt__select opt__number" value="1920" min="200"
+                max="3840" step="2" aria-label="Custom height">
+            </div>
             <div class="opt">
               <span class="opt__label">Tone</span>
               <select id="optTone" class="opt__select">
@@ -270,7 +278,7 @@
 
   <footer class="footer">
     <div class="footer__inner">
-      <span>&copy;2026 Cinematic AI . All Rights Reserved .</span>
+      <span>&copy;2026 Cinematic AI | All Rights Reserved </span>
       <span class="footer__sep">·</span>
       <span id="apiStatusFooter" class="footer__status">checking backend…</span>
     </div>

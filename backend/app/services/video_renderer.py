@@ -32,12 +32,12 @@ except Exception:
     MultiplyVolume = None
 
 from app.config import get_settings
-from app.models.schemas import ScriptPlan, PLATFORM_SPECS
+from app.models.schemas import ScriptPlan
 from app.services.caption_service import Cue
 
 settings = get_settings()
 
-FONT_PATH_BOLD = None  # resolved lazily; falls back to PIL default if not found
+FONT_PATH_BOLD = None 
 for candidate in [
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
@@ -88,7 +88,6 @@ def _caption_image(text: str, width: int, font_size: int) -> Image.Image:
 
     img = Image.new("RGBA", (text_w + padding * 2, text_h + padding * 2), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    # black outline for legibility over any footage, white fill on top
     d.text((padding - bbox[0], padding - bbox[1]), text, font=font,
             fill=(255, 255, 255, 255), stroke_width=6, stroke_fill=(0, 0, 0, 255))
     return img
@@ -115,11 +114,10 @@ def render_video(
     voiceover_path: Optional[Path],
     music_path: Optional[Path],
     caption_cues: List[Cue],
-    platform: str,
+    width: int,
+    height: int,
     out_path: Path,
 ) -> Path:
-    spec = PLATFORM_SPECS[platform]
-    width, height = spec["w"], spec["h"]
     font_size = max(36, width // 18)
 
     scene_clips = []
@@ -148,7 +146,6 @@ def render_video(
         audio_tracks.append(music)
 
     if video.duration < total_duration:
-        # Hold the last frame for the extra time so video length matches audio length.
         last_frame_clip = ImageClip(video.get_frame(max(video.duration - 0.04, 0))).with_duration(
             total_duration - video.duration
         )
@@ -168,7 +165,7 @@ def render_video(
         fps=settings.DEFAULT_FPS,
         codec="libx264",
         audio_codec="aac",
-        preset="veryfast",       # speed lever: veryfast trades a little quality for a lot of speed
+        preset="veryfast",
         threads=settings.RENDER_THREADS,
         bitrate="4500k" if width <= 1280 else "6000k",
         logger=None,

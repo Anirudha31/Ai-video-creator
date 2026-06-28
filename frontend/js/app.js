@@ -41,9 +41,26 @@ function renderPlatformChips(platforms) {
       container.querySelectorAll(".chip").forEach((c) => {
         c.setAttribute("aria-pressed", c.dataset.platform === key ? "true" : "false");
       });
+      onPlatformSelected(key);
     });
     container.appendChild(chip);
   });
+}
+
+function onPlatformSelected(key) {
+  const customGroup = el("customDimsGroup");
+  if (!customGroup) return;
+  if (key === "custom") {
+    customGroup.hidden = false;
+    const panel = el("optionsPanel");
+    const toggle = el("optionsToggle");
+    if (panel.hidden) {
+      panel.hidden = false;
+      toggle.setAttribute("aria-expanded", "true");
+    }
+  } else {
+    customGroup.hidden = true;
+  }
 }
 
 function renderPlatformsGrid(platforms) {
@@ -71,7 +88,6 @@ async function initPlatforms() {
     renderPlatformsGrid(platforms);
   } catch {
     renderPlatformChips(STATIC_PLATFORMS);
-    // leave the static HTML fallback grid in place
   }
 }
 
@@ -79,7 +95,7 @@ async function checkBackend() {
   const footerStatus = el("apiStatusFooter");
   try {
     await Api.health();
-    footerStatus.textContent = "backend online";
+    footerStatus.textContent = "Backend Online";
     footerStatus.classList.add("is-ok");
   } catch {
     footerStatus.textContent = "backend unreachable \u2014 check it's running, or update Settings \u2192 API base URL";
@@ -97,10 +113,11 @@ function setupOptionsToggle() {
   });
 }
 
+
 function buildPayload() {
   const prompt = el("prompt").value.trim();
   const duration = el("optDuration").value;
-  return {
+  const payload = {
     prompt,
     platform: selectedPlatform,
     duration_seconds: duration ? parseInt(duration, 10) : null,
@@ -110,6 +127,15 @@ function buildPayload() {
     add_music: el("optMusic").checked,
     add_thumbnail: el("optThumbnail").checked,
   };
+  if (selectedPlatform === "custom") {
+    const w = parseInt(el("optCustomWidth").value, 10);
+    const h = parseInt(el("optCustomHeight").value, 10);
+    if (w > 0 && h > 0) {
+      payload.custom_width = w;
+      payload.custom_height = h;
+    }
+  }
+  return payload;
 }
 
 function showPanel(panelId) {
